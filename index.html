@@ -19,9 +19,13 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            transition: background 0.3s ease;
         }
 
-        /* Écran de chargement */
+        body.light-mode {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
         .loader-screen {
             position: fixed;
             top: 0;
@@ -88,27 +92,405 @@
             100% { width: 100%; }
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1400px;
+            height: 85vh;
+            max-height: 900px;
+            display: flex;
+            gap: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: relative;
+        }
+
+        @media (max-width: 1200px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                height: 95vh;
+                padding: 0;
+            }
+        }
+
+        /* Menu Hamburger */
+        .hamburger-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .hamburger-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        body.light-mode .hamburger-btn:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .hamburger-line {
+            width: 22px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .hamburger-line {
+            background: #374151;
+        }
+
+        .hamburger-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Bouton toggle mode */
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1000;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode .theme-toggle {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        body.light-mode .theme-toggle:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        /* Overlay pour fermer la sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px 0 0 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        body.light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                border-radius: 0 20px 20px 0;
+                transform: translateX(-100%);
+                width: 85%;
+                max-width: 300px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode .sidebar-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        body.light-mode .new-chat-btn {
+            background: #667eea;
+            border: 1px solid #667eea;
+            color: white;
+        }
+
+        .new-chat-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        body.light-mode .new-chat-btn:hover {
+            background: #5568d3;
+        }
+
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .conversation-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            position: relative;
+        }
+
+        body.light-mode .conversation-item {
+            background: rgba(102, 126, 234, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            color: #374151;
+        }
+
+        .conversation-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        body.light-mode .conversation-item:hover {
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .conversation-item.active {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        body.light-mode .conversation-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .conversation-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-preview {
+            font-size: 12px;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-delete {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(239, 68, 68, 0.3);
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .conversation-item:hover .conversation-delete {
+            opacity: 1;
+        }
+
+        .conversation-delete:hover {
+            background: rgba(239, 68, 68, 0.5);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-status {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* Main Chat */
+        .main-container {
+            flex: 1;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            overflow: hidden;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
             display: flex;
             flex-direction: column;
-            height: 85vh;
-            max-height: 800px;
+            overflow: hidden;
+        }
+
+        body.light-mode .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                border-radius: 20px;
+                border-left: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            body.light-mode .main-container {
+                border-left: 1px solid rgba(0, 0, 0, 0.1);
+            }
         }
 
         .header {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 25px 30px;
+            padding: 20px 30px;
             color: white;
             display: flex;
             align-items: center;
@@ -116,8 +498,32 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        body.light-mode .header {
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+                padding-left: 70px;
+                padding-right: 70px;
+            }
+
+            .header h1 {
+                font-size: 18px !important;
+            }
+
+            .logo {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 16px !important;
+            }
+        }
+
         .header h1 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -125,15 +531,15 @@
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
@@ -141,10 +547,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.9;
             background: rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -170,10 +576,38 @@
             background: rgba(0, 0, 0, 0.05);
         }
 
+        body.light-mode .chat-area {
+            background: #f9fafb;
+        }
+
+        @media (max-width: 768px) {
+            .chat-area {
+                padding: 20px 15px;
+            }
+        }
+
         .welcome {
             text-align: center;
             padding: 60px 20px;
             color: white;
+        }
+
+        body.light-mode .welcome {
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .welcome {
+                padding: 30px 15px;
+            }
+
+            .welcome h2 {
+                font-size: 24px !important;
+            }
+
+            .welcome p {
+                font-size: 14px !important;
+            }
         }
 
         .welcome h2 {
@@ -190,16 +624,18 @@
 
         .suggestions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .suggestion-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 16px;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
@@ -214,12 +650,12 @@
         }
 
         .suggestion-card h3 {
-            font-size: 15px;
-            margin-bottom: 8px;
+            font-size: 14px;
+            margin-bottom: 6px;
         }
 
         .suggestion-card p {
-            font-size: 13px;
+            font-size: 12px;
             opacity: 0.8;
         }
 
@@ -253,13 +689,13 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .user-avatar {
+        .user-message-avatar {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             color: white;
         }
 
-        .ai-avatar {
+        .ai-message-avatar {
             background: rgba(74, 222, 128, 0.2);
             backdrop-filter: blur(10px);
             color: white;
@@ -269,7 +705,6 @@
             flex: 1;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             padding: 15px 20px;
             border-radius: 12px;
             line-height: 1.6;
@@ -278,22 +713,139 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
+        body.light-mode .message-content {
+            background: white;
+            color: #374151;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
         .user-message .message-content {
             background: rgba(255, 255, 255, 0.25);
+        }
+
+        body.light-mode .user-message .message-content {
+            background: #667eea;
+            color: white;
+            border: 1px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .message {
+                margin-bottom: 15px;
+                gap: 10px;
+            }
+
+            .message-avatar {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 16px !important;
+            }
+
+            .message-content {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+        }
+
+        .message-mode {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Animation de chargement élaborée */
+        .loading-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .loading-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .loading-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: 0s; }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-12px); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            opacity: 0.8;
+            animation: fadeInOut 1.5s infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .input-area {
             padding: 25px 30px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode .input-area {
+            background: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .input-area {
+                padding: 15px;
+            }
         }
 
         .input-wrapper {
             display: flex;
             gap: 15px;
             align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .input-wrapper {
+                gap: 10px;
+            }
         }
 
         .input-field {
@@ -310,14 +862,37 @@
             color: white;
         }
 
+        body.light-mode .input-field {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            color: #374151;
+        }
+
         .input-field::placeholder {
             color: rgba(255, 255, 255, 0.6);
+        }
+
+        body.light-mode .input-field::placeholder {
+            color: rgba(55, 65, 81, 0.5);
         }
 
         .input-field:focus {
             background: rgba(255, 255, 255, 0.25);
             border-color: rgba(255, 255, 255, 0.5);
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode .input-field:focus {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .input-field {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
         }
 
         .send-btn {
@@ -333,36 +908,132 @@
             transition: all 0.3s ease;
         }
 
-        .send-btn:hover {
+        body.light-mode .send-btn {
+            background: #667eea;
+            border: 1px solid #667eea;
+            color: white;
+        }
+
+        .send-btn:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .send-btn:active {
-            transform: translateY(0);
+        body.light-mode .send-btn:hover:not(:disabled) {
+            background: #5568d3;
         }
 
-        .typing-indicator {
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .send-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* Modal de connexion */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal.active {
             display: flex;
-            gap: 5px;
-            padding: 10px;
         }
 
-        .typing-dot {
+        .modal-content {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            color: white;
+        }
+
+        .modal-content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .modal-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .modal-skip {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            opacity: 0.8;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .modal-skip:hover {
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar {
             width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
         }
 
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
@@ -371,179 +1042,558 @@
     <div class="loader-screen" id="loaderScreen">
         <div class="loader-logo">✨</div>
         <div class="loader-title">NexusAI</div>
-        <div class="loader-subtitle">Initialisation de l'intelligence artificielle...</div>
+        <div class="loader-subtitle">Initialisation du système hybride...</div>
         <div class="loader-bar">
             <div class="loader-progress"></div>
         </div>
     </div>
 
-    <div class="container" style="opacity: 0; transition: opacity 0.5s ease;">
-        <div class="header">
-            <h1>
-                <div class="logo">✨</div>
-                NexusAI
-            </h1>
-            <div class="status">
-                <div class="status-dot"></div>
-                En ligne
-            </div>
+    <!-- Modal de connexion -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h2>👋 Bienvenue sur NexusAI</h2>
+            <p style="text-align: center; margin-bottom: 25px; opacity: 0.9;">Créez un compte pour sauvegarder vos conversations</p>
+            <input type="text" class="modal-input" id="usernameInput" placeholder="Nom d'utilisateur">
+            <input type="email" class="modal-input" id="emailInput" placeholder="Email (optionnel)">
+            <button class="modal-btn" onclick="createAccount()">Créer un compte</button>
+            <div class="modal-skip" onclick="skipLogin()">Continuer sans compte</div>
         </div>
+    </div>
 
-        <div class="chat-area" id="chatArea">
-            <div class="welcome">
-                <h2>Bonjour, comment puis-je vous aider ?</h2>
-                <p>Je suis votre assistant intelligent. Posez-moi n'importe quelle question ou sélectionnez une suggestion ci-dessous.</p>
-                
-                <div class="suggestions">
-                    <div class="suggestion-card" onclick="sendSuggestion('Explique-moi la photosynthèse')">
-                        <h3>🔬 Science</h3>
-                        <p>Explique-moi la photosynthèse</p>
-                    </div>
-                    <div class="suggestion-card" onclick="sendSuggestion('Aide-moi à écrire un email professionnel')">
-                        <h3>✍️ Rédaction</h3>
-                        <p>Aide-moi à écrire un email</p>
-                    </div>
-                    <div class="suggestion-card" onclick="sendSuggestion('Donne-moi 5 conseils de productivité')">
-                        <h3>💡 Productivité</h3>
-                        <p>Conseils pour être plus efficace</p>
-                    </div>
-                    <div class="suggestion-card" onclick="sendSuggestion('Calcule 15% de 250')">
-                        <h3>🧮 Mathématiques</h3>
-                        <p>Résous un calcul</p>
+    <!-- Application principale -->
+    <div class="app-container">
+        <!-- Bouton Hamburger -->
+        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </button>
+
+        <!-- Bouton toggle thème -->
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+            <span id="themeIcon">🌙</span>
+        </button>
+
+        <!-- Overlay pour fermer la sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" onclick="createNewChat()">
+                    <span style="font-size: 18px;">+</span>
+                    Nouvelle conversation
+                </button>
+            </div>
+
+            <div class="conversations-list" id="conversationsList">
+                <!-- Les conversations seront ajoutées ici -->
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile" onclick="showLoginModal()">
+                    <div class="user-avatar" id="userAvatarSidebar">👤</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userNameDisplay">Invité</div>
+                        <div class="user-status" id="userStatusDisplay">Cliquez pour vous connecter</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="input-area">
-            <div class="input-wrapper">
-                <input 
-                    type="text" 
-                    class="input-field" 
-                    id="userInput" 
-                    placeholder="Écrivez votre message ici..."
-                    onkeypress="if(event.key === 'Enter') sendMessage()"
-                >
-                <button class="send-btn" onclick="sendMessage()">Envoyer</button>
+        <!-- Main Chat -->
+        <div class="main-container">
+            <div class="header">
+                <h1>
+                    <div class="logo">✨</div>
+                    <span id="chatTitle">NexusAI</span>
+                </h1>
+                <div class="status">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Mode Hybride</span>
+                </div>
+            </div>
+
+            <div class="chat-area" id="chatArea">
+                <div class="welcome">
+                    <h2>Bonjour, je suis NexusAI Hybride ! 🚀</h2>
+                    <p>Je combine une IA locale intelligente avec l'API Hugging Face pour vous offrir la meilleure expérience.</p>
+                    
+                    <div class="suggestions">
+                        <div class="suggestion-card" onclick="sendSuggestion('Explique-moi la photosynthèse')">
+                            <h3>🔬 Science</h3>
+                            <p>Explications scientifiques</p>
+                        </div>
+                        <div class="suggestion-card" onclick="sendSuggestion('Calcule 25% de 380')">
+                            <h3>🧮 Calculs</h3>
+                            <p>Mathématiques</p>
+                        </div>
+                        <div class="suggestion-card" onclick="sendSuggestion('Écris un poème sur l\'océan')">
+                            <h3>✍️ Créativité</h3>
+                            <p>Contenu créatif</p>
+                        </div>
+                        <div class="suggestion-card" onclick="sendSuggestion('Donne-moi 5 conseils de productivité')">
+                            <h3>💡 Conseils</h3>
+                            <p>Productivité</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        class="input-field" 
+                        id="userInput" 
+                        placeholder="Écrivez votre message ici..."
+                        onkeypress="if(event.key === 'Enter') sendMessage()"
+                    >
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">Envoyer</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        const API_KEY = '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';
+        const API_URL = 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium';
+        
         const chatArea = document.getElementById('chatArea');
         const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        let conversations = [];
+        let currentConversationId = null;
+        let currentUser = null;
+        let apiAvailable = true;
+        let sidebarOpen = true;
+        let lightMode = false;
 
         // Chargement initial
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loaderScreen').classList.add('hidden');
-                document.querySelector('.container').style.opacity = '1';
+                document.querySelector('.app-container').style.opacity = '1';
+                loadConversations();
+                checkUserLogin();
+                checkScreenSize();
+                loadThemePreference();
             }, 2200);
         });
 
-        // Moteur IA simple mais intelligent
-        function generateAIResponse(userMessage) {
+        // Gestion du thème
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('nexusai_theme');
+            if (savedTheme === 'light') {
+                enableLightMode();
+            }
+        }
+
+        function toggleTheme() {
+            if (lightMode) {
+                disableLightMode();
+            } else {
+                enableLightMode();
+            }
+        }
+
+        function enableLightMode() {
+            document.body.classList.add('light-mode');
+            document.getElementById('themeIcon').textContent = '☀️';
+            lightMode = true;
+            localStorage.setItem('nexusai_theme', 'light');
+        }
+
+        function disableLightMode() {
+            document.body.classList.remove('light-mode');
+            document.getElementById('themeIcon').textContent = '🌙';
+            lightMode = false;
+            localStorage.setItem('nexusai_theme', 'dark');
+        }
+
+        // Vérifier la taille d'écran au démarrage et au redimensionnement
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+
+        window.addEventListener('resize', checkScreenSize);
+
+        // Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const hamburger = document.getElementById('hamburgerBtn');
+
+            if (sidebar.classList.contains('active') || !sidebar.classList.contains('collapsed')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+
+        function openSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const hamburger = document.getElementById('hamburgerBtn');
+
+            sidebar.classList.remove('collapsed');
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            hamburger.classList.add('active');
+            sidebarOpen = true;
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const hamburger = document.getElementById('hamburgerBtn');
+
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('active');
+                sidebar.classList.add('collapsed');
+            } else {
+                sidebar.classList.add('collapsed');
+            }
+            
+            overlay.classList.remove('active');
+            hamburger.classList.remove('active');
+            sidebarOpen = false;
+        }
+
+        // Gestion utilisateur
+        function checkUserLogin() {
+            const savedUser = JSON.parse(localStorage.getItem('nexusai_user') || 'null');
+            if (savedUser) {
+                currentUser = savedUser;
+                updateUserDisplay();
+            }
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function createAccount() {
+            const username = document.getElementById('usernameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            
+            if (!username) {
+                alert('Veuillez entrer un nom d\'utilisateur');
+                return;
+            }
+
+            currentUser = {
+                username: username,
+                email: email || null,
+                createdAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('nexusai_user', JSON.stringify(currentUser));
+            updateUserDisplay();
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function skipLogin() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function updateUserDisplay() {
+            if (currentUser) {
+                document.getElementById('userNameDisplay').textContent = currentUser.username;
+                document.getElementById('userStatusDisplay').textContent = 'Connecté';
+                document.getElementById('userAvatarSidebar').textContent = currentUser.username.charAt(0).toUpperCase();
+            }
+        }
+
+        // Gestion des conversations
+        function loadConversations() {
+            const saved = localStorage.getItem('nexusai_conversations');
+            if (saved) {
+                conversations = JSON.parse(saved);
+                renderConversations();
+                if (conversations.length > 0) {
+                    loadConversation(conversations[0].id);
+                }
+            }
+        }
+
+        function saveConversations() {
+            localStorage.setItem('nexusai_conversations', JSON.stringify(conversations));
+        }
+
+        function createNewChat() {
+            const newConv = {
+                id: Date.now(),
+                title: 'Nouvelle conversation',
+                messages: [],
+                createdAt: new Date().toISOString()
+            };
+            conversations.unshift(newConv);
+            saveConversations();
+            renderConversations();
+            loadConversation(newConv.id);
+        }
+
+        function loadConversation(id) {
+            currentConversationId = id;
+            const conv = conversations.find(c => c.id === id);
+            if (!conv) return;
+
+            chatArea.innerHTML = '';
+            conv.messages.forEach(msg => {
+                addMessageToDOM(msg.content, msg.type, msg.mode);
+            });
+
+            if (conv.messages.length === 0) {
+                showWelcome();
+            }
+
+            renderConversations();
+            document.getElementById('chatTitle').textContent = conv.title;
+        }
+
+        function deleteConversation(id, event) {
+            event.stopPropagation();
+            if (!confirm('Supprimer cette conversation ?')) return;
+            
+            conversations = conversations.filter(c => c.id !== id);
+            saveConversations();
+            renderConversations();
+            
+            if (currentConversationId === id) {
+                if (conversations.length > 0) {
+                    loadConversation(conversations[0].id);
+                } else {
+                    createNewChat();
+                }
+            }
+        }
+
+        function renderConversations() {
+            const list = document.getElementById('conversationsList');
+            list.innerHTML = conversations.map(conv => `
+                <div class="conversation-item ${conv.id === currentConversationId ? 'active' : ''}" 
+                     onclick="loadConversation(${conv.id})">
+                    <div class="conversation-title">${conv.title}</div>
+                    <div class="conversation-preview">${conv.messages.length > 0 ? conv.messages[0].content.substring(0, 40) + '...' : 'Aucun message'}</div>
+                    <button class="conversation-delete" onclick="deleteConversation(${conv.id}, event)">×</button>
+                </div>
+            `).join('');
+        }
+
+        function showWelcome() {
+            chatArea.innerHTML = `
+                <div class="welcome">
+                    <h2>Bonjour, je suis NexusAI Hybride ! 🚀</h2>
+                    <p>Je combine une IA locale intelligente avec l'API Hugging Face pour vous offrir la meilleure expérience.</p>
+                    
+                    <div class="suggestions">
+                        <div class="suggestion-card" onclick="sendSuggestion('Explique-moi la photosynthèse')">
+                            <h3>🔬 Science</h3>
+                            <p>Explications scientifiques</p>
+                        </div>
+                        <div class="suggestion-card" onclick="sendSuggestion('Calcule 25% de 380')">
+                            <h3>🧮 Calculs</h3>
+                            <p>Mathématiques</p>
+                        </div>
+                        <div class="suggestion-card" onclick="sendSuggestion('Écris un poème sur l\\'océan')">
+                            <h3>✍️ Créativité</h3>
+                            <p>Contenu créatif</p>
+                        </div>
+                        <div class="suggestion-card" onclick="sendSuggestion('Donne-moi 5 conseils de productivité')">
+                            <h3>💡 Conseils</h3>
+                            <p>Productivité</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // IA locale intelligente
+        function getLocalAIResponse(userMessage) {
             const msg = userMessage.toLowerCase();
 
             // Calculs mathématiques
-            if (msg.includes('calcul') || msg.includes('+') || msg.includes('-') || msg.includes('*') || msg.includes('/') || msg.includes('%')) {
-                const calc = msg.match(/(\d+)\s*([+\-*/%])\s*(\d+)/);
-                if (calc) {
-                    const a = parseFloat(calc[1]);
-                    const op = calc[2];
-                    const b = parseFloat(calc[3]);
-                    let result;
-                    switch(op) {
-                        case '+': result = a + b; break;
-                        case '-': result = a - b; break;
-                        case '*': result = a * b; break;
-                        case '/': result = a / b; break;
-                        case '%': result = (a / 100) * b; break;
-                    }
-                    return `Le résultat est ${result}. ${op === '%' ? `Donc ${a}% de ${b} = ${result}` : ''}`;
+            const calcMatch = msg.match(/(\d+)\s*([+\-*/%])\s*(\d+)/);
+            if (calcMatch) {
+                const a = parseFloat(calcMatch[1]);
+                const op = calcMatch[2];
+                const b = parseFloat(calcMatch[3]);
+                let result;
+                switch(op) {
+                    case '+': result = a + b; break;
+                    case '-': result = a - b; break;
+                    case '*': result = a * b; break;
+                    case '/': result = b !== 0 ? a / b : 'Division par zéro impossible'; break;
+                    case '%': result = (a / 100) * b; break;
                 }
+                return `✅ Le résultat est **${result}**${op === '%' ? ` (${a}% de ${b})` : ''}`;
             }
 
             // Pourcentages
-            if (msg.includes('% de')) {
-                const match = msg.match(/(\d+)%\s*de\s*(\d+)/);
-                if (match) {
-                    const percent = parseFloat(match[1]);
-                    const number = parseFloat(match[2]);
-                    const result = (percent / 100) * number;
-                    return `${percent}% de ${number} = ${result}`;
-                }
+            const percentMatch = msg.match(/(\d+)%\s*de\s*(\d+)/);
+            if (percentMatch) {
+                const percent = parseFloat(percentMatch[1]);
+                const number = parseFloat(percentMatch[2]);
+                const result = (percent / 100) * number;
+                return `✅ ${percent}% de ${number} = **${result}**`;
             }
 
-            // Questions sur l'IA
+            // Présentation
             if (msg.includes('qui es-tu') || msg.includes('présente-toi') || msg.includes('tu es qui')) {
-                return "Je suis NexusAI, un assistant intelligent conçu pour vous aider dans vos tâches quotidiennes. Je peux répondre à vos questions, effectuer des calculs, vous donner des conseils et bien plus encore !";
-            }
-
-            // Science
-            if (msg.includes('photosynthèse')) {
-                return "La photosynthèse est le processus par lequel les plantes convertissent la lumière du soleil, l'eau et le dioxyde de carbone en glucose (sucre) et en oxygène. C'est grâce à ce processus que les plantes produisent leur nourriture et libèrent l'oxygène que nous respirons. Les chloroplastes dans les feuilles contiennent de la chlorophylle qui capture la lumière solaire pour réaliser cette réaction chimique essentielle à la vie sur Terre.";
-            }
-
-            // Productivité
-            if (msg.includes('productivité') || msg.includes('efficace')) {
-                return "Voici 5 conseils pour améliorer votre productivité :\n\n1. **Technique Pomodoro** : Travaillez par sessions de 25 minutes avec des pauses de 5 minutes.\n\n2. **Priorisez vos tâches** : Commencez par les tâches les plus importantes le matin.\n\n3. **Éliminez les distractions** : Désactivez les notifications pendant vos sessions de travail.\n\n4. **Fixez des objectifs SMART** : Spécifiques, Mesurables, Atteignables, Réalistes, Temporels.\n\n5. **Prenez soin de vous** : Dormez suffisamment, faites de l'exercice et mangez sainement.";
-            }
-
-            // Email
-            if (msg.includes('email') || msg.includes('mail')) {
-                return "Voici une structure pour un email professionnel :\n\n**Objet** : [Sujet clair et concis]\n\n**Corps** :\nBonjour [Nom],\n\nJ'espère que ce message vous trouve bien.\n\n[Contexte en 1-2 phrases]\n[Demande ou information principale]\n[Action attendue ou prochaines étapes]\n\nJe reste à votre disposition pour toute question.\n\nCordialement,\n[Votre nom]\n\nN'oubliez pas d'être courtois, précis et de relire avant d'envoyer !";
+                return "Je suis **NexusAI**, un assistant intelligent hybride ! 🤖\n\nJe combine :\n• **IA Locale** pour des réponses instantanées\n• **API Hugging Face** pour des réponses complexes\n\nJe m'adapte automatiquement à vos besoins !";
             }
 
             // Salutations
-            if (msg.includes('bonjour') || msg.includes('salut') || msg.includes('hello') || msg.includes('hi')) {
-                return "Bonjour ! Ravi de vous voir. Comment puis-je vous aider aujourd'hui ?";
+            if (msg.match(/\b(bonjour|salut|hello|hi)\b/)) {
+                return "Bonjour ! 👋 Ravi de vous voir. Comment puis-je vous aider aujourd'hui ?";
+            }
+
+            if (msg.includes('ça va') || msg.includes('comment vas-tu')) {
+                return "Je vais très bien, merci ! 😊 Prêt à vous aider. Et vous ?";
             }
 
             if (msg.includes('merci') || msg.includes('thank')) {
-                return "Je vous en prie ! N'hésitez pas si vous avez d'autres questions. 😊";
+                return "Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions.";
             }
 
             if (msg.includes('au revoir') || msg.includes('bye') || msg.includes('adieu')) {
-                return "Au revoir ! N'hésitez pas à revenir si vous avez besoin d'aide. Bonne journée ! 👋";
+                return "Au revoir ! 👋 À bientôt. Passez une excellente journée !";
             }
 
-            // Météo (simulation)
-            if (msg.includes('météo') || msg.includes('temps qu\'il fait')) {
-                return "Je n'ai pas accès aux données météo en temps réel, mais je peux vous suggérer de consulter des sites comme Météo France ou Weather.com pour obtenir les prévisions précises de votre région !";
+            // Photosynthèse
+            if (msg.includes('photosynthèse')) {
+                return "🌱 **La Photosynthèse**\n\nC'est le processus par lequel les plantes transforment :\n• **Lumière du soleil** + Eau + CO₂\n• En **Glucose** (nourriture) + Oxygène\n\nGrâce à la **chlorophylle** dans les feuilles, les plantes captent l'énergie solaire et produisent l'oxygène que nous respirons. C'est essentiel à la vie sur Terre ! 🌍";
             }
 
-            // Programmation
-            if (msg.includes('code') || msg.includes('programme') || msg.includes('javascript') || msg.includes('python')) {
-                return "Je peux vous aider avec la programmation ! Que souhaitez-vous savoir ? Par exemple : comment créer une fonction, comprendre les boucles, les tableaux, les objets, etc. N'hésitez pas à être plus précis dans votre question.";
+            // Productivité
+            if (msg.includes('productivité') || msg.includes('efficace') || msg.includes('conseil')) {
+                return "💡 **5 Conseils de Productivité**\n\n1. **Technique Pomodoro** : 25 min de travail, 5 min de pause\n2. **Priorisez** : Faites le plus important en premier\n3. **Éliminez les distractions** : Mode focus activé\n4. **Objectifs SMART** : Spécifiques et Mesurables\n5. **Prenez soin de vous** : Sommeil, sport, nutrition\n\n🎯 La clé : constance et discipline !";
             }
 
-            // Réponse générale intelligente
-            const responses = [
-                `C'est une question intéressante ! D'après ce que je comprends de "${userMessage}", je dirais que c'est un sujet qui mérite réflexion. Pouvez-vous me donner plus de détails pour que je puisse vous aider au mieux ?`,
-                `Je vois que vous me parlez de "${userMessage}". C'est un sujet passionnant ! Bien que je n'aie pas toutes les informations spécifiques, je suis là pour vous aider. Pouvez-vous préciser votre question ?`,
-                `Merci pour votre message concernant "${userMessage}". Pour vous donner la meilleure réponse possible, pourriez-vous reformuler votre question ou me donner plus de contexte ?`,
-                `Je comprends votre intérêt pour "${userMessage}". C'est un domaine vaste ! Pour vous aider efficacement, pouvez-vous me dire exactement ce que vous aimeriez savoir à ce sujet ?`
-            ];
-
-            return responses[Math.floor(Math.random() * responses.length)];
+            return null;
         }
 
-        function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
+        // Déterminer si on utilise l'API
+        function shouldUseAPI(message) {
+            const msg = message.toLowerCase();
+            
+            const localCases = [
+                /calcul|calcule|\d+\s*[+\-*/%]\s*\d+/i,
+                /\d+%\s*de\s*\d+/i,
+                /bonjour|salut|hello|hi\b/i,
+                /merci|thank/i,
+                /au revoir|bye|adieu/i,
+                /qui es-tu|présente-toi|tu es qui/i,
+                /comment ça va|ça va/i
+            ];
 
-            addMessage(message, 'user');
+            for (let pattern of localCases) {
+                if (pattern.test(msg)) return false;
+            }
+
+            const complexPatterns = [
+                /explique|raconte|écris|rédige|décris/i,
+                /pourquoi|comment se fait|quelle est/i,
+                /histoire|poème|texte|article/i
+            ];
+
+            for (let pattern of complexPatterns) {
+                if (pattern.test(msg)) return true;
+            }
+
+            return message.length > 50;
+        }
+
+        // Appel API
+        async function callHuggingFaceAPI(userMessage) {
+            try {
+                const conv = conversations.find(c => c.id === currentConversationId);
+                const recentMessages = conv ? conv.messages.slice(-4) : [];
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inputs: {
+                            past_user_inputs: recentMessages.filter(m => m.type === 'user').map(m => m.content).slice(-2),
+                            generated_responses: recentMessages.filter(m => m.type === 'ai').map(m => m.content).slice(-2),
+                            text: userMessage
+                        },
+                        options: {
+                            wait_for_model: true,
+                            use_cache: false
+                        }
+                    })
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                let aiResponse = data.generated_text || data.conversation?.generated_responses?.slice(-1)[0] || 
+                                (Array.isArray(data) && data[0]?.generated_text) || data[0] || '';
+
+                return String(aiResponse).trim() || null;
+
+            } catch (error) {
+                console.warn('API non disponible:', error.message);
+                apiAvailable = false;
+                return null;
+            }
+        }
+
+        // Envoi de message
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message || !currentConversationId) return;
+
+            sendBtn.disabled = true;
+            userInput.disabled = true;
+
+            const conv = conversations.find(c => c.id === currentConversationId);
+            if (conv.messages.length === 0) {
+                conv.title = message.substring(0, 30) + (message.length > 30 ? '...' : '');
+            }
+
+            addMessageToDOM(message, 'user');
+            conv.messages.push({ content: message, type: 'user' });
             userInput.value = '';
 
-            setTimeout(() => {
-                showTypingIndicator();
-                setTimeout(() => {
-                    hideTypingIndicator();
-                    const response = generateAIResponse(message);
-                    addMessage(response, 'ai');
-                }, 1500);
-            }, 500);
+            showLoadingMessage();
+
+            let response;
+            let usedMode = 'local';
+
+            response = getLocalAIResponse(message);
+
+            if (!response && shouldUseAPI(message) && apiAvailable) {
+                usedMode = 'api';
+                response = await callHuggingFaceAPI(message);
+            }
+
+            if (!response) {
+                usedMode = 'local';
+                response = `Je comprends votre question sur "${message}". 🤔\n\nPour les questions complexes, je recommande de reformuler ou d'être plus spécifique. Je peux vous aider avec :\n• Calculs mathématiques\n• Explications scientifiques de base\n• Conseils pratiques\n• Conversations générales`;
+            }
+
+            hideLoadingMessage();
+            addMessageToDOM(response, 'ai', usedMode);
+            conv.messages.push({ content: response, type: 'ai', mode: usedMode });
+
+            saveConversations();
+            renderConversations();
+
+            sendBtn.disabled = false;
+            userInput.disabled = false;
+            userInput.focus();
         }
 
         function sendSuggestion(text) {
@@ -551,45 +1601,59 @@
             sendMessage();
         }
 
-        function addMessage(text, type) {
+        function addMessageToDOM(text, type, mode = 'local') {
             const welcome = chatArea.querySelector('.welcome');
             if (welcome) welcome.remove();
 
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}-message`;
             
+            const modeIcon = mode === 'api' ? '☁️' : '⚡';
+            const modeText = mode === 'api' ? 'API Hugging Face' : 'IA Locale';
+            
             messageDiv.innerHTML = `
-                <div class="message-avatar ${type}-avatar">
+                <div class="message-avatar ${type}-message-avatar">
                     ${type === 'user' ? '👤' : '🤖'}
                 </div>
-                <div class="message-content">${text.replace(/\n/g, '<br>')}</div>
+                <div class="message-content">
+                    ${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}
+                    ${type === 'ai' ? `<div class="message-mode">${modeIcon} ${modeText}</div>` : ''}
+                </div>
             `;
 
             chatArea.appendChild(messageDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        function showTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message ai-message';
-            typingDiv.id = 'typing';
-            typingDiv.innerHTML = `
-                <div class="message-avatar ai-avatar">🤖</div>
+        function showLoadingMessage() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai-message';
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.innerHTML = `
+                <div class="message-avatar ai-message-avatar">🤖</div>
                 <div class="message-content">
-                    <div class="typing-indicator">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
+                    <div class="loading-message">
+                        <div class="loading-spinner">
+                            <div class="loading-ring"></div>
+                        </div>
+                        <div>
+                            <div class="loading-dots">
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                            </div>
+                            <div class="loading-text">NexusAI réfléchit...</div>
+                        </div>
                     </div>
                 </div>
             `;
-            chatArea.appendChild(typingDiv);
+            chatArea.appendChild(loadingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        function hideTypingIndicator() {
-            const typing = document.getElementById('typing');
-            if (typing) typing.remove();
+        function hideLoadingMessage() {
+            const loading = document.getElementById('loadingMessage');
+            if (loading) loading.remove();
         }
     </script>
 </body>
